@@ -4,19 +4,19 @@ import re
 def reformat_swift_text(input_text):
     transformations = [
         # Replace "--------------- EVENT DETAILS -------------------"
-        # (r"((-|—)+)( *)EVENT DETAILS( *)((-|—)+)", "+++ EVENT DETAILS +++"),
+        (r"((-|—)+)( *)EVENT DETAILS( *)((-|—)+)", "+++ EVENT DETAILS +++"),
 
         # Replace ".-------------------"
-        # (r"\.((-|—)+)", "."),
+        (r"\.((-|—)+)", "."),
 
         # Delete all ":70E::ADTX//" fields
-        # (r":\d{2}\w::\w{4}\/\/", ""),
+        (r":\d{2}\w::\w{4}\/\/", ""),
 
         # Delete "INFORMATION SOURCE: AGENT, [REDACTED], LONDON"
-        # (r"INFORMATION SOURCE: AGENT, \[REDACTED\], LONDON\r?\n", ""),
+        (r"INFORMATION SOURCE: AGENT, \[REDACTED\], LONDON\r?\n", ""),
 
         # Replace "--------------- ACTION TO BE TAKEN -------------------"
-        # (r"((-|—)+)( *)ACTION TO BE TAKEN( *)((-|—)+)", """+++ INSTRUCTION REQUIREMENTS +++\n.\nMINIMUM TO EXERCISE:\nMULTIPLE TO EXERCISE:\n.\nANY RESPONSE RECEIVED THAT IS NOT IN THE CORRECT MULTIPLE, AS STIPULATED UNDER THE FULL EVENT TERMS, WILL BE ROUNDED DOWN AND APPLIED TO THE NEAREST WHOLE MULTIPLE. THE DIFFERENCE BETWEEN THE QUANTITY INSTRUCTED VERSUS THE AMOUNT APPLIED WILL REMAIN UNINSTRUCTED."""),
+        (r"((-|—)+)( *)ACTION TO BE TAKEN( *)((-|—)+)", """+++ INSTRUCTION REQUIREMENTS +++\n.\nMINIMUM TO EXERCISE:\nMULTIPLE TO EXERCISE:\n.\nANY RESPONSE RECEIVED THAT IS NOT IN THE CORRECT MULTIPLE, AS STIPULATED UNDER THE FULL EVENT TERMS, WILL BE ROUNDED DOWN AND APPLIED TO THE NEAREST WHOLE MULTIPLE. THE DIFFERENCE BETWEEN THE QUANTITY INSTRUCTED VERSUS THE AMOUNT APPLIED WILL REMAIN UNINSTRUCTED."""),
 
         # Delete fields starting with specific text
         (r"BY SENDING AN INSTRUCTION, YOU AUTHORISE US TO DISCLOSE YOUR NAME AND ACCOUNT NUMBER\r?\n", ""),
