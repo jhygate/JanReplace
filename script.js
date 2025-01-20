@@ -22,6 +22,7 @@ document.getElementById('convertButton').addEventListener('click', () => {
     const replacements = [
         { find: /foo/g, replace: 'bar' }, // Example: replace 'foo' with 'bar'
         { find: /hello/g, replace: 'hi' }, // Example: replace 'hello' with 'hi'
+        { find: /\.((-|—)+)/g, replace: "." },
         // Add more replacements here
     ];
 
