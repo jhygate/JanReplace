@@ -1,0 +1,16 @@
+1e. - add prompts
+1g. - note if the 95:V field exists + replace with input fields if it does
+1i. - test on relevant doc
+1j. - test on relevant doc + add input fields
+
+
+2.
+
+3.
+
+Refactor
+
+Put rules in text file: (CANT USE "," as seperator, try [SEPERATOR]\n)
+Name[SEPERATOR]
+Regex (one line)[SEPERATOR]
+replacement (new lines allowed)[SEPERATOR]

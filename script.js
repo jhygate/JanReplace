@@ -4,7 +4,7 @@ document.getElementById('inputText').addEventListener('input', () => {
     updateLineNumbers(inputText.value, inputLineNumbers);
 });
 
-document.getElementById('convertButton').addEventListener('click', () => {
+document.getElementById('convertButton').addEventListener('click', async () => {
     const inputText = document.getElementById('inputText').value;
     const logList = document.getElementById('logList');
     const outputLineNumbers = document.getElementById('outputLineNumbers');
@@ -12,38 +12,21 @@ document.getElementById('convertButton').addEventListener('click', () => {
 
     logList.innerHTML = ''; // Clear previous log entries
 
-    // Define regex replacements using RegExp
-    const replacements = [
-        { find: /\.((-|—)+)/g, replace: "" },
-        { find: /((-|—)+)( *)EVENT DETAILS( *)((-|—)+)/g, replace: "+++ EVENT DETAILS +++" },
-        { find: /INFORMATION SOURCE:.*(\r?\n)?/g, replace: "" },
-        { find: /\.\n\./g, replace: "." },
-        { find: /:\d{2}\w::\w{4}\/\//g, replace: "" },
-        { find: /-*\s*ACTION TO BE TAKEN\s*-*/g, replace: `+++ INSTRUCTION REQUIREMENTS +++
-.
-MINIMUM TO EXERCISE:
-MULTIPLE TO EXERCISE:
-.
-ANY RESPONSE RECEIVED THAT IS NOT IN THE CORRECT MULTIPLE, AS STIPULATED UNDER
-THE FULL EVENT TERMS, WILL BE ROUNDED DOWN AND APPLIED TO THE NEAREST WHOLE
-MULTIPLE. THE DIFFERENCE BETWEEN THE QUANTITY INSTRUCTED VERSUS THE AMOUNT
-APPLIED WILL REMAIN UNINSTRUCTED.` },
-        { find: /THE\s+ABOVE\s+IS\s+GUIDANCE\s+ONLY\.\s+YOU\s+ARE\s+SOLELY\s+RESPONSIBLE\s+TO\s+DETERMINE\s+WHETHER\s+TO\s+SEND\s+ONE\s+INSTRUCTION\s+PER\s+BENEFICIAL\s+OWNER\s+OR\s+NOT\.\s+WE\s+WILL\s+FORWARD\s+BUT\s+NOT\s+VALIDATE\s+ANY\s+INSTRUCTION\s+RECEIVED\s+REGARDLESS\s+IF\s+YOU\s+SENT\s+IT\s+SEPARATELY\s+PER\s+BENEFICIAL\s+OWNER\s+OR\s+NOT\./gs, replace: "" },
-        { find: /ELECTRONIC\s+INSTRUCTIONS:.*?70E:INST:\s+YOUR\s+CONTACT\s+NAME\s+AND\s+PHONE\s+NUMBER[^.]*\./gs, replace: "" },
-        { find: /^\s*[\r\n]/gm, replace: "" }   , 
-        { find: /\s*\.\s*(\n\s*\.\s*)+/gs, replace: ".\n" }
-    ];
+    // Fetch and parse the rules from rules.txt
+    const response = await fetch('rules.txt');
+    const rulesText = await response.text();
+    const rules = parseRules(rulesText);
 
     let convertedText = inputText;
 
     // Apply replacements
-    replacements.forEach(({ find, replace }) => {
+    rules.forEach(({ name, find, replace }) => {
         const matches = [...convertedText.matchAll(find)];
         if (matches.length > 0) {
             matches.forEach(match => {
-                // Add to log with line number
+                // Add to log with line number and rule name
                 const logItem = document.createElement('li');
-                logItem.textContent = `Replaced "${match[0]}" with "${replace}"`;
+                logItem.textContent = `Rule "${name}": Replaced "${match[0]}" with "${replace}"`;
                 logList.appendChild(logItem);
             });
         }
@@ -53,5 +36,21 @@ APPLIED WILL REMAIN UNINSTRUCTED.` },
 
     // Update the output text and line numbers
     outputTextElement.value = convertedText;
-    updateLineNumbers(convertedText, outputLineNumbers);
 });
+
+function parseRules(rulesText) {
+    const rules = [];
+    const ruleBlocks = rulesText.split('[NEW_RULE]');
+    ruleBlocks.forEach(block => {
+        const parts = block.split('[SEPARATOR]');
+        if (parts.length >= 3) {
+            const name = parts[0].trim();
+            const pattern = parts[1].trim().slice(1, -2);
+            const flags = parts[1].trim().slice(-1);
+            const find = new RegExp(pattern, flags.includes('g') ? flags : flags + 'g'); // Ensure 'g' flag is included
+            const replace = parts[2].trim();
+            rules.push({ name, find, replace });
+        }
+    });
+    return rules;
+}
