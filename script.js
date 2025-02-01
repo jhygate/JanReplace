@@ -20,11 +20,28 @@ document.getElementById('convertButton').addEventListener('click', () => {
 
     // Define regex replacements
     const replacements = [
-        { find: /foo/g, replace: 'bar' }, // Example: replace 'foo' with 'bar'
-        { find: /hello/g, replace: 'hi' }, // Example: replace 'hello' with 'hi'
-        { find: /\.((-|—)+)/g, replace: "." },
-        // Add more replacements here
+        { find: /\.((-|—)+)/g, replace: "" },
+        { find: /((-|—)+)( *)EVENT DETAILS( *)((-|—)+)/g, replace: "+++ EVENT DETAILS +++" },
+        { find: /INFORMATION SOURCE:.*(\r?\n)?/g, replace: "" },
+        { find: /\.\n\./g, replace: "." },
+        { find: /:\d{2}\w::\w{4}\/\//g, replace: "" },
+        { find: /-*\s*ACTION TO BE TAKEN\s*-*/g, replace: `+++ INSTRUCTION REQUIREMENTS +++
+.
+MINIMUM TO EXERCISE:
+MULTIPLE TO EXERCISE:
+.
+ANY RESPONSE RECEIVED THAT IS NOT IN THE CORRECT MULTIPLE, AS STIPULATED UNDER
+THE FULL EVENT TERMS, WILL BE ROUNDED DOWN AND APPLIED TO THE NEAREST WHOLE
+MULTIPLE. THE DIFFERENCE BETWEEN THE QUANTITY INSTRUCTED VERSUS THE AMOUNT
+APPLIED WILL REMAIN UNINSTRUCTED.` }, // New replacement rule
+        { find: /THE\s+ABOVE\s+IS\s+GUIDANCE\s+ONLY\.\s+YOU\s+ARE\s+SOLELY\s+RESPONSIBLE\s+TO\s+DETERMINE\s+WHETHER\s+TO\s+SEND\s+ONE\s+INSTRUCTION\s+PER\s+BENEFICIAL\s+OWNER\s+OR\s+NOT\.\s+WE\s+WILL\s+FORWARD\s+BUT\s+NOT\s+VALIDATE\s+ANY\s+INSTRUCTION\s+RECEIVED\s+REGARDLESS\s+IF\s+YOU\s+SENT\s+IT\s+SEPARATELY\s+PER\s+BENEFICIAL\s+OWNER\s+OR\s+NOT\./g, replace: "" } // New replacement rule
+
+
+
+
     ];
+
+    // (r"((-|—)+)( *)EVENT DETAILS( *)((-|—)+)", "+++ EVENT DETAILS +++"),
 
     let convertedText = inputText;
     const lines = inputText.split('\n'); // Split input into lines
